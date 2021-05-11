@@ -6,16 +6,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
   function hideContent() {
     content.forEach((item) => {
-      item.style.display = 'none';
-    }); 
-
+      item.classList.add('hide');
+      item.classList.remove('show', 'fade');
+    });
     tabs.forEach((item) => {
       item.classList.remove('tabheader__item_active');
     });
   } 
 
   function addContent(i = 0) {
-    content[i].style.display = 'block';
+    content[i].classList.remove('hide');
+    content[i].classList.add('show', 'fade');
     tabs[i].classList.add('tabheader__item_active');
   }
 
@@ -33,8 +34,8 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
   });
-
 });
+
 
 
 
