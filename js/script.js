@@ -36,7 +36,7 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   //timeOut
-  const deadline = "2021-05-12";
+  const deadline = "2022-05-12";
 
   function getRemainingTime(endtime) {
     const t = Date.parse(deadline) - Date.parse(new Date()),
@@ -86,6 +86,59 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   setClock(".timer", deadline);
+
+  //Modal
+  const modal = document.querySelector(".modal"),
+    btnsModal = document.querySelectorAll("[data-modal]"),
+    closeModal = document.querySelector("[data-close]"),
+    modalTimeOut = setTimeout(addModal, 5000);
+ 
+  btnsModal.forEach((item) => {
+    item.addEventListener("click", addModal);
+  });
+  
+  closeModal.addEventListener("click", hideModal);
+  
+  modal.addEventListener("click", (e) => {
+     console.log(e);
+     if (e.target == modal){
+      hideModal();
+    }
+  });
+  
+  
+  document.addEventListener("keydown", (e) => {
+    if (e.code == "Escape" && modal.classList.contains("show")) {
+      console.log(e.code);
+      hideModal();
+    }
+  });
+
+
+  document.addEventListener("scroll", removeScrollEvent);
+  
+
+  function removeScrollEvent() {
+    if (document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+      addModal();
+      document.removeEventListener("scroll", removeScrollEvent);
+    }
+    
+  }
+
+  function hideModal() {
+    modal.classList.add('hide');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  function addModal(){
+    modal.classList.add('show');
+    modal.classList.remove('hide');
+    clearTimeout(modalTimeOut);
+    document.body.style.overflow = 'hidden';
+  }
+
 });
 
 
