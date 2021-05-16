@@ -90,8 +90,8 @@ window.addEventListener("DOMContentLoaded", () => {
   //Modal
   const modal = document.querySelector(".modal"),
     btnsModal = document.querySelectorAll("[data-modal]"),
-    closeModal = document.querySelector("[data-close]"),
-    modalTimeOut = setTimeout(addModal, 5000);
+    closeModal = document.querySelector("[data-close]");
+    //modalTimeOut = setTimeout(addModal, 5000);
  
   btnsModal.forEach((item) => {
     item.addEventListener("click", addModal);
@@ -132,7 +132,7 @@ window.addEventListener("DOMContentLoaded", () => {
   function addModal(){
     modal.classList.add('show');
     modal.classList.remove('hide');
-    clearTimeout(modalTimeOut);
+    //clearTimeout(modalTimeOut);
     document.body.style.overflow = 'hidden';
   }
 
@@ -191,8 +191,58 @@ window.addEventListener("DOMContentLoaded", () => {
     menu,
     'post'
     ).create();
-    
+
+  // Forms
+  const forms = document.querySelectorAll('form');
+  const message = {
+    loading: "Загрузка",
+    done: "Мы с вами свяжемся",
+    error: 'Что-то пошло не так'
+  };
+
+   forms.forEach((item) => {
+    sendForm(item);
+   });
+
+  function sendForm(form){
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const divMessage = document.createElement('div');
+      const formFormData = new FormData(form);
+      const object = {};
+
+      formFormData.forEach((value, key) => {
+        object[key] = value;
+      });
+
+      const objectJSON = JSON.stringify(object);
+
+
+      const request = new XMLHttpRequest();
+      request.open('POST', 'server.php');
+      request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+      request.send(objectJSON); 
+
+      divMessage.textContent = message.loading;
+      form.append(divMessage);
+
+      request.addEventListener('load', () => {
+        if(request.status == 200){
+          console.log(request.response);
+          divMessage.textContent = message.done;
+          form.reset();
+          setTimeout(() => {divMessage.remove();}, 3000);
+          
+        }else{
+          console.log("error");
+          divMessage.textContent = message.error;
+        }
+      });
+    });
+  }   
 });
+
 
 
 
