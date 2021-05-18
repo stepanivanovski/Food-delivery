@@ -97,11 +97,14 @@ window.addEventListener("DOMContentLoaded", () => {
     item.addEventListener("click", addModal);
   });
   
-  closeModal.addEventListener("click", hideModal);
+  modal.addEventListener("click", (e) =>{
+    if (e.target === modal || e.target.getAttribute('data-close') == "") {
+     hideModal(); 
+    }
+  });
   
   modal.addEventListener("click", (e) => {
-     console.log(e);
-     if (e.target == modal){
+    if (e.target == modal){
       hideModal();
     }
   });
@@ -134,6 +137,8 @@ window.addEventListener("DOMContentLoaded", () => {
     modal.classList.remove('hide');
     //clearTimeout(modalTimeOut);
     document.body.style.overflow = 'hidden';
+    document.querySelector('.modal__dialog').classList.remove('hide');
+    document.querySelector('.modal__dialog').classList.add('show');
   }
 
   //Class
@@ -195,7 +200,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // Forms
   const forms = document.querySelectorAll('form');
   const message = {
-    loading: "Загрузка",
+    loading: "img/form/spinner.svg",
     done: "Мы с вами свяжемся",
     error: 'Что-то пошло не так'
   };
@@ -208,39 +213,55 @@ window.addEventListener("DOMContentLoaded", () => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const divMessage = document.createElement('div');
+      const divMessage = document.createElement('img');
+      divMessage.src = message.loading;
+      divMessage.style.cssText = `
+      display: block;
+      margin: 0 auto;`;
+      form.insertAdjacentElement('afterend', divMessage);
+
       const formFormData = new FormData(form);
       const object = {};
-
       formFormData.forEach((value, key) => {
         object[key] = value;
       });
 
-      const objectJSON = JSON.stringify(object);
-
-
-      const request = new XMLHttpRequest();
-      request.open('POST', 'server.php');
-      request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
-      request.send(objectJSON); 
-
-      divMessage.textContent = message.loading;
-      form.append(divMessage);
-
-      request.addEventListener('load', () => {
-        if(request.status == 200){
-          console.log(request.response);
-          divMessage.textContent = message.done;
-          form.reset();
-          setTimeout(() => {divMessage.remove();}, 3000);
-          
-        }else{
-          console.log("error");
-          divMessage.textContent = message.error;
+      fetch('server.php', {
+        method: 'POST',
+        body: JSON.stringify(object),
+        headers: {
+         'Content-type':'application/json; //charset=utf-8'
         }
-      });
+      })
+      .then(data => data.text())
+      .then(data => {
+        console.log(data);
+        divMessage.remove();
+        showThanksModal("Спасибо, мы с вами скоро свяжемся");
+      })
+      .catch(() => {
+        console.log("error");
+        showThanksModal("Что-то пожло не так");
+      }).finally(() => form.reset());
     });
-  }   
+  } 
+  
+  function showThanksModal(message){
+    const divModal = document.createElement('div');
+
+    divModal.classList.add('modal__dialog');
+    divModal.innerHTML = `<div class="modal__content">
+    <div data-close class="modal__close">&times;</div>
+    <div class="modal__title">${message}!</div>
+    </div>`;
+    addModal();
+    
+    document.querySelector('.modal__dialog').classList.add('hide');
+    document.querySelector('.modal__dialog').classList.remove('show');
+    modal.prepend(divModal);
+    setTimeout(() => {divModal.remove();
+      hideModal();}, 3000);
+  }
 });
 
 
