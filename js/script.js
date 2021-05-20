@@ -186,13 +186,21 @@ window.addEventListener("DOMContentLoaded", () => {
      return await res.json();
   };
 
-  getResourse('  http://localhost:3000/menu')
+  axios.get('http://localhost:3000/menu')
+    .then((data) => {
+      console.log(data);
+      data.data.forEach(({img, altimg, title, descr, price}) => {
+        new Menu(img, altimg, title, descr, price, menu).create();
+     });
+    });
+
+ /* getResourse('  http://localhost:3000/menu')
      .then(data => {
        console.log(data);
        data.forEach(({img, altimg, title, descr, price}) => {
           new Menu(img, altimg, title, descr, price, menu).create();
        });  
-     });
+     });*/
      
   // Forms
   const forms = document.querySelectorAll('form');
@@ -234,16 +242,6 @@ window.addEventListener("DOMContentLoaded", () => {
       const json = JSON.stringify(Object.fromEntries(formFormData.entries()));
                
       postData('http://localhost:3000/requests', json)
-      //fetch('server.php', {
-       // method: 'POST',
-       // headers: {
-       //   'Content-type':'application/json;'
-       // },
-       // body: json
-     // })
-     // .then(data => {
-       // data.text();
-      //})
       .then(data => {
         console.log(data);
         divMessage.remove();
