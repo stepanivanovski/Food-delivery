@@ -144,24 +144,30 @@ window.addEventListener("DOMContentLoaded", () => {
   //Class
   const menu = document.querySelector('[data-class]');
   class Menu {
-    constructor(menuTitle, menuDescrip, cost, imgWay, parent, alt){
-      this.menuTitle = menuTitle;
-      this.menuDescrip = menuDescrip;
-      this.cost = cost;
-      this.imgWay = imgWay;
-      this.parent =  parent;
-      this.alt = alt;
+    constructor(img, altimg, title, descr, price, parent){
+      this.img = img;
+      this.altimg = altimg ;
+      this.title = title ;
+      this.descr = descr ;
+      this.price =  price;
+      this.parent = parent;
+      this.transfer = 27;
+      this.changeToUAH();
+    }
+    
+    changeToUAH() {
+      this.price = this.price * this.transfer; 
     }
 
     create(){
       let divMenu = document.createElement('div');
-      divMenu.innerHTML = `<img src="${this.imgWay}" alt="${this.alt}">
-      <h3 class="menu__item-subtitle">${this.menuTitle}</h3>
-      <div class="menu__item-descr">${this.menuDescrip}</div>
+      divMenu.innerHTML = `<img src="${this.img}" alt="${this.altimg}">
+      <h3 class="menu__item-subtitle">${this.title}</h3>
+      <div class="menu__item-descr">${this.descr}</div>
       <div class="menu__item-divider"></div>
       <div class="menu__item-price">
       <div class="menu__item-cost">Цена:</div>
-      <div class="menu__item-total"><span> ${this.cost}</span> грн/день</div>
+      <div class="menu__item-total"><span> ${this.price}</span> грн/день</div>
       </div>`;
       divMenu.classList.add('menu__item');
       this.parent.prepend(divMenu);
@@ -170,33 +176,24 @@ window.addEventListener("DOMContentLoaded", () => {
   } 
   menu.innerHTML = '';
 
-  new Menu(
-    'Меню "Фитнес"', 
-    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!', 
-    '229', 
-    'img/tabs/vegy.jpg',
-    menu,
-    'vegy'
-    ).create();
+  const getResourse = async (url) => {
+    const res =  await fetch(url);
 
-  new Menu(
-    'Меню "Премиум"', 
-    'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!', 
-    '550', 
-    'img/tabs/elite.jpg',
-    menu,
-    'elite'
-    ).create();
+    if (!res.ok) {
+      throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+    }
 
-  new Menu(
-    'Меню "Постное"', 
-    'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.', 
-    '430', 
-    'img/tabs/post.jpg',
-    menu,
-    'post'
-    ).create();
+     return await res.json();
+  };
 
+  getResourse('  http://localhost:3000/menu')
+     .then(data => {
+       console.log(data);
+       data.forEach(({img, altimg, title, descr, price}) => {
+          new Menu(img, altimg, title, descr, price, menu).create();
+       });  
+     });
+     
   // Forms
   const forms = document.querySelectorAll('form');
   const message = {
@@ -205,9 +202,21 @@ window.addEventListener("DOMContentLoaded", () => {
     error: 'Что-то пошло не так'
   };
 
-   forms.forEach((item) => {
-    sendForm(item);
-   });
+  forms.forEach((item) => {
+  sendForm(item);
+  });
+
+  const postData = async (url, data) => {
+    let req =  await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-type':'application/json;'
+      },
+      body: data
+    });
+
+    return await req.json();
+  };
 
   function sendForm(form){
     form.addEventListener('submit', (e) => {
@@ -221,19 +230,20 @@ window.addEventListener("DOMContentLoaded", () => {
       form.insertAdjacentElement('afterend', divMessage);
 
       const formFormData = new FormData(form);
-      const object = {};
-      formFormData.forEach((value, key) => {
-        object[key] = value;
-      });
-
-      fetch('server.php', {
-        method: 'POST',
-        body: JSON.stringify(object),
-        headers: {
-         'Content-type':'application/json; //charset=utf-8'
-        }
-      })
-      .then(data => data.text())
+         
+      const json = JSON.stringify(Object.fromEntries(formFormData.entries()));
+               
+      postData('http://localhost:3000/requests', json)
+      //fetch('server.php', {
+       // method: 'POST',
+       // headers: {
+       //   'Content-type':'application/json;'
+       // },
+       // body: json
+     // })
+     // .then(data => {
+       // data.text();
+      //})
       .then(data => {
         console.log(data);
         divMessage.remove();
@@ -262,6 +272,7 @@ window.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {divModal.remove();
       hideModal();}, 3000);
   }
+
 });
 
 
