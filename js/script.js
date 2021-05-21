@@ -278,9 +278,53 @@ window.addEventListener("DOMContentLoaded", () => {
         nextSlider = document.querySelector('.offer__slider-next'),
         slide = document.querySelectorAll('.offer__slide'),
         currentNumder = document.querySelector('#current'),
-        totalNumder = document.querySelector('#total');
+        totalNumder = document.querySelector('#total'),
+        sliderWrapper = document.querySelector('.offer__slider-wrapper'),
+        innerWrapper = document.querySelector('.slider__width'),
+        width = window.getComputedStyle(sliderWrapper).width;
+  
+  let offset = 0;
+  let y = 0;
+  innerWrapper.style.width = 100 * slide.length + '%';
+  innerWrapper.style.display = 'flex';
+  sliderWrapper.style.overflow = 'hidden';
+  innerWrapper.style.transition = '0.5s all';
+  slide.forEach((slide) => {
+    slide.style.width = width;
+  });
+  
+  console.log(width.slice(0, slide.length - 1));
 
-  function hideSlide() {
+  currentNumder.textContent = `0${y + 1}`;
+  totalNumder.textContent = `0${slide.length}`;
+ 
+  nextSlider.addEventListener('click', () => {
+    y++;
+    if (offset == +(width.slice(0, slide.length - 1)) * (slide.length-1)){
+      offset = 0;
+      y = 0;
+    }else{
+      offset += +(width.slice(0, slide.length - 1)); 
+    }
+    innerWrapper.style.transform = `translateX(-${offset}px)`;
+    currentNumder.textContent = `0${y + 1}`;
+   
+  });
+
+  prevSlider.addEventListener("click", () => {
+    y--;
+    if (offset == 0){
+      offset = +(width.slice(0, slide.length - 1)) * (slide.length-1);
+      y = slide.length - 1;
+    }else{
+      offset -= +(width.slice(0, slide.length - 1));
+      
+    }
+    innerWrapper.style.transform = `translateX(-${offset}px)`;
+    currentNumder.textContent = `0${y + 1}`;
+  });
+
+  /*function hideSlide() {
     slide.forEach((item) => {
       item.classList.add("hide");
       item.classList.remove("show");
@@ -294,7 +338,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   hideSlide();
   addSlide();
-  let y = 0;
+  
   currentNumder.textContent = `0${y + 1}`;
   totalNumder.textContent = `0${slide.length}`;
 
@@ -322,7 +366,7 @@ window.addEventListener("DOMContentLoaded", () => {
       addSlide(y);
     }
     currentNumder.textContent = `0${y + 1}`;
-  });
+  });*/
 });
 
 
