@@ -226,6 +226,7 @@ window.addEventListener("DOMContentLoaded", () => {
     return await req.json();
   };
 
+  
   function sendForm(form){
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -238,9 +239,9 @@ window.addEventListener("DOMContentLoaded", () => {
       form.insertAdjacentElement('afterend', divMessage);
 
       const formFormData = new FormData(form);
-         
+              
       const json = JSON.stringify(Object.fromEntries(formFormData.entries()));
-               
+        
       postData('http://localhost:3000/requests', json)
       .then(data => {
         console.log(data);
@@ -271,6 +272,57 @@ window.addEventListener("DOMContentLoaded", () => {
       hideModal();}, 3000);
   }
 
+  //Slider
+
+  const prevSlider = document.querySelector('.offer__slider-prev'),
+        nextSlider = document.querySelector('.offer__slider-next'),
+        slide = document.querySelectorAll('.offer__slide'),
+        currentNumder = document.querySelector('#current'),
+        totalNumder = document.querySelector('#total');
+
+  function hideSlide() {
+    slide.forEach((item) => {
+      item.classList.add("hide");
+      item.classList.remove("show");
+    });
+  }
+
+  function addSlide(i = 0) {
+    slide[i].classList.remove("hide");
+    slide[i].classList.add("show");
+  }
+
+  hideSlide();
+  addSlide();
+  let y = 0;
+  currentNumder.textContent = `0${y + 1}`;
+  totalNumder.textContent = `0${slide.length}`;
+
+  nextSlider.addEventListener('click', () => {
+    y++;
+    if (y < slide.length){
+      hideSlide();
+      addSlide(y);
+    }else{
+      y = 0;
+      hideSlide();
+      addSlide(y);
+    }
+    currentNumder.textContent = `0${y + 1}`;
+  });
+
+  prevSlider.addEventListener("click", () => {
+    y--;
+    if (y >= 0) {
+      hideSlide();
+      addSlide(y);
+    } else {
+      y = 3;
+      hideSlide();
+      addSlide(y);
+    }
+    currentNumder.textContent = `0${y + 1}`;
+  });
 });
 
 
