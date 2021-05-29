@@ -1,13 +1,13 @@
-function slider() {
-  const prevSlider = document.querySelector(".offer__slider-prev"),
-    nextSlider = document.querySelector(".offer__slider-next"),
-    slide = document.querySelectorAll(".offer__slide"),
-    currentNumder = document.querySelector("#current"),
-    totalNumder = document.querySelector("#total"),
-    sliderWrapper = document.querySelector(".offer__slider-wrapper"),
-    innerWrapper = document.querySelector(".slider__width"),
+function slider({conteiner, sliders, nextArrow, prevArrow, totalCounter, currentCounter, wrapper, field}) {
+  const prevSlider = document.querySelector(prevArrow),
+    nextSlider = document.querySelector(nextArrow),
+    slide = document.querySelectorAll(sliders),
+    currentNumder = document.querySelector(currentCounter),
+    totalNumder = document.querySelector(totalCounter),
+    sliderWrapper = document.querySelector(wrapper),
+    innerWrapper = document.querySelector(field),
     width = window.getComputedStyle(sliderWrapper).width,
-    slider = document.querySelector(".offer__slider");
+    slider = document.querySelector(conteiner);
 
   const carousel = document.createElement("div");
   carousel.classList.add("carousel-indicators");
@@ -35,8 +35,6 @@ function slider() {
   slide.forEach((slide) => {
     slide.style.width = width;
   });
-
-  console.log(removeNotDigit(width));
 
   currentNumder.textContent = `0${y + 1}`;
   totalNumder.textContent = `0${slide.length}`;
@@ -135,4 +133,4 @@ function slider() {
   });*/
 }
 
-module.exports = slider;
+export default slider;

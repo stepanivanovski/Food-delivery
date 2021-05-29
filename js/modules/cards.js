@@ -1,5 +1,7 @@
-function cards() {
-  const menu = document.querySelector('[data-class]');
+import {getResourse} from '../services/services';
+
+function cards(cardsSelector) {
+  const menu = document.querySelector(cardsSelector);
   class Menu {
     constructor(img, altimg, title, descr, price, parent){
       this.img = img;
@@ -43,22 +45,20 @@ function cards() {
      return await res.json();
   };
 
-  axios.get('http://localhost:3000/menu')
+ /* axios.get('http://localhost:3000/menu')
     .then((data) => {
-      console.log(data);
       data.data.forEach(({img, altimg, title, descr, price}) => {
         new Menu(img, altimg, title, descr, price, menu).create();
      });
-    });
+    });*/
 
- /* getResourse('  http://localhost:3000/menu')
-     .then(data => {
-       console.log(data);
-       data.forEach(({img, altimg, title, descr, price}) => {
-          new Menu(img, altimg, title, descr, price, menu).create();
-       });  
-     });*/
+  getResourse('  http://localhost:3000/menu')
+    .then(data => {
+      data.forEach(({img, altimg, title, descr, price}) => {
+        new Menu(img, altimg, title, descr, price, menu).create();
+      });  
+    });
 
 }
 
-module.exports = cards;
+export default cards;
