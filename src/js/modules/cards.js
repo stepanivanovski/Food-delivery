@@ -35,16 +35,6 @@ function cards(cardsSelector) {
   } 
   menu.innerHTML = '';
 
-  const getResourse = async (url) => {
-    const res =  await fetch(url);
-
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-    }
-
-     return await res.json();
-  };
-
  /* axios.get('http://localhost:3000/menu')
     .then((data) => {
       data.data.forEach(({img, altimg, title, descr, price}) => {
@@ -52,7 +42,7 @@ function cards(cardsSelector) {
      });
     });*/
 
-  getResourse('  http://localhost:3000/menu')
+  getResourse('http://localhost:3000/menu')
     .then(data => {
       data.forEach(({img, altimg, title, descr, price}) => {
         new Menu(img, altimg, title, descr, price, menu).create();

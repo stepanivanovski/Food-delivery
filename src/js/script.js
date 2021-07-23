@@ -8,6 +8,9 @@
   import timer from './modules/timer';
   import {openModal} from './modules/modal'; 
 
+window.addEventListener('readystatechange', () => {
+  console.log(document.readyState);
+})
 window.addEventListener("DOMContentLoaded", () => {
   const modalTimerId = setTimeout(() => {openModal(modalSelector, modalTimerId);}, 300000);
   calc();
