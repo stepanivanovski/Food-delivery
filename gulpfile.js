@@ -1,6 +1,7 @@
-const gulp        = require('gulp');
+const gulp = require('gulp');
 const imagemin = require('gulp-imagemin');
 const htmlmin = require('gulp-htmlmin');
+const webpack = require('webpack');
 
 gulp.task('styles', function() {
     return gulp.src("./src/css/style.css") //задача возвращает

@@ -1,23 +1,4 @@
-function closeModal(modalSelector) {
-  const modal = document.querySelector(modalSelector);
-  modal.classList.add("hide");
-  modal.classList.remove("show");
-  document.body.style.overflow = "";
-}
-
-function openModal(modalSelector, modalTimerId) {
-  const modal = document.querySelector(modalSelector);
-  modal.classList.add("show");
-  modal.classList.remove("hide");
-  document.body.style.overflow = "hidden";
-
-  if (modalTimerId){
-     clearInterval(modalTimerId); 
-  }
-}
-
 function modal(triggerSelector, modalSelector, modalTimerId) {
-  // Modal
   const modalTrigger = document.querySelectorAll(triggerSelector),
     modal = document.querySelector(modalSelector);
 
@@ -39,20 +20,50 @@ function modal(triggerSelector, modalSelector, modalTimerId) {
     }
   });
 
-  // Изменил значение, чтобы не отвлекало
-
+  window.addEventListener("scroll", showModalByScroll);
+  
   function showModalByScroll() {
     if (
-      window.pageYOffset + document.documentElement.clientHeight ==
+      window.pageYOffset + document.documentElement.clientHeight >=
       document.documentElement.scrollHeight
-    ) {
+      ) {
       openModal(modalSelector,modalTimerId);
       window.removeEventListener("scroll", showModalByScroll);
     }
   }
-  window.addEventListener("scroll", showModalByScroll);
+}
+
+function openModal(modalSelector, modalTimerId) {
+  const modal = document.querySelector(modalSelector);
+  modal.classList.add("show");
+  modal.classList.remove("hide");
+  document.body.style.cssText = `overflow:hidden; 
+    padding-right:${calcScrollbarWidth()}px;`;
+
+  if (modalTimerId){
+     clearInterval(modalTimerId); 
+  }
+}
+
+function closeModal(modalSelector) {
+  const modal = document.querySelector(modalSelector);
+  modal.classList.add("hide");
+  modal.classList.remove("show");
+  document.body.style.cssText = `overflow:auto; 
+    padding-right:0px`;
+}
+
+function calcScrollbarWidth() {
+  let div = document.createElement('div');
+  div.style.cssText = "width:100px; hieght:100px; overflow:scroll;";
+  document.body.append(div);
+
+  let scrollbarWidth = div.offsetWidth - div.clientWidth;
+
+  div.remove();
+
+  return scrollbarWidth;
 }
 
 export default modal;
-export { openModal };
-export { closeModal };
+export {openModal, closeModal, calcScrollbarWidth};

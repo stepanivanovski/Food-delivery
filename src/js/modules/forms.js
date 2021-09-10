@@ -1,7 +1,9 @@
-import {closeModal, openModal} from './modal';
+import {closeModal, openModal, calcScrollbarWidth} from './modal';
 import {postData} from '../services/services';
 
+
 function forms(formSelector, modalTimerId) {
+  //modalTimerId is a parametr for disabling the timer intended for opening a modal window
   const forms = document.querySelectorAll(formSelector);
   const message = {
     loading: "img/form/spinner.svg",
@@ -9,8 +11,9 @@ function forms(formSelector, modalTimerId) {
     failure: "Что-то пошло не так...",
   };
 
-  forms.forEach((item) => {
-    bindPostData(item);
+  forms.forEach((form) => {
+    bindPostData(form);
+    validateForm(form);
   });
   
   function bindPostData(form) {
@@ -29,14 +32,13 @@ function forms(formSelector, modalTimerId) {
 
       const json = JSON.stringify(Object.fromEntries(formData.entries()));
   
-
       postData("http://localhost:3000/requests", json)
-        .then((data) => {
-          console.log(data);
+        .then(() => {
           showThanksModal(message.success);
           statusMessage.remove();
         })
-        .catch(() => {
+        .catch((error) => {
+          console.log(error);
           showThanksModal(message.failure);
         })
         .finally(() => {
@@ -66,6 +68,19 @@ function forms(formSelector, modalTimerId) {
       prevModalDialog.classList.remove("hide");
       closeModal('.modal');
     }, 4000);
+  }
+
+  function validateForm(form) {
+    let nameInput = form.querySelector('[type="text"]'),
+      phoneInput = form.querySelector('[type="phone"]');
+    
+    nameInput.addEventListener('input', function() {
+      this.value = this.value.replace(/[^\p{L}\s]/igu, '');
+    });
+    
+    phoneInput.addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d\-()+]/g, '');
+    });
   }
 }
 

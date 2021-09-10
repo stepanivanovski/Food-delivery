@@ -1,7 +1,6 @@
 'use strict';
-
 const postData = async (url, data) => {
-  let res = await fetch(url, {
+  let response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -9,17 +8,17 @@ const postData = async (url, data) => {
     body: data,
   });
 
-  return await res.json();
+  return await response.json();
 };
 
 const getResourse = async (url) => {
-  const res =  await fetch(url);
+  const response =  await fetch(url);
 
-  if (!res.ok) {
-    throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+  if (!response.ok) {
+    throw new Error(`Could not fetch ${url}, status: ${response.status}`);
   }
 
-   return await res.json();
+  return await response.json();
 };
 
 export {postData, getResourse};

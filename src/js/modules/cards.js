@@ -1,7 +1,8 @@
 import {getResourse} from '../services/services';
 
 function cards(cardsSelector) {
-  const menu = document.querySelector(cardsSelector);
+  const menuContainer = document.querySelector(cardsSelector);
+  
   class Menu {
     constructor(img, altimg, title, descr, price, parent){
       this.img = img;
@@ -18,8 +19,9 @@ function cards(cardsSelector) {
       this.price = this.price * this.transfer; 
     }
 
-    create(){
+    create() {
       let divMenu = document.createElement('div');
+
       divMenu.innerHTML = `<img src="${this.img}" alt="${this.altimg}">
       <h3 class="menu__item-subtitle">${this.title}</h3>
       <div class="menu__item-descr">${this.descr}</div>
@@ -28,27 +30,21 @@ function cards(cardsSelector) {
       <div class="menu__item-cost">Цена:</div>
       <div class="menu__item-total"><span> ${this.price}</span> грн/день</div>
       </div>`;
+
       divMenu.classList.add('menu__item');
       this.parent.prepend(divMenu);
     }
-
   } 
-  menu.innerHTML = '';
 
- /* axios.get('http://localhost:3000/menu')
-    .then((data) => {
-      data.data.forEach(({img, altimg, title, descr, price}) => {
-        new Menu(img, altimg, title, descr, price, menu).create();
-     });
-    });*/
-
+  menuContainer.innerHTML = '';
+  
   getResourse('http://localhost:3000/menu')
     .then(data => {
       data.forEach(({img, altimg, title, descr, price}) => {
-        new Menu(img, altimg, title, descr, price, menu).create();
+        new Menu(img, altimg, title, descr, price, menuContainer).create();
       });  
-    });
-
+    })
+    .catch(error => console.log(error));
 }
 
 export default cards;
